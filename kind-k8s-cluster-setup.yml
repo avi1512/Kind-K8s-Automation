@@ -1,0 +1,43 @@
+---
+ - name: Kind K8s Cluster Setup Play
+   hosts: kind
+   gather_facts: false
+
+   tasks:
+   - name: Installing Docker and Setup
+     shell: |
+             sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+             sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+             dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+             dnf install docker-ce --nobest -y
+             systemctl start docker
+             systemctl enable docker
+
+   - name: Kind Setup
+     shell: |
+             curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.15.0/kind-linux-amd64
+             chmod +x ./kind
+             mv ./kind /usr/bin/kind
+
+   - name: Kubectl Setup
+     shell: |
+             curl -LO https://dl.k8s.io/release/v1.25.0/bin/linux/amd64/kubectl
+             chmod +x kubectl
+             mv kubectl /usr/bin/kubectl
+
+   - name: Creating Kind Config Directory and File
+     shell: mkdir /root/kind && touch /root/kind/config.yml
+
+   - name: Creating Kind Cluster With Config File
+     blockinfile:
+       dest: /root/kind/config.yml
+       block: |
+               # three node (two workers) cluster config
+               kind: Cluster
+               apiVersion: kind.x-k8s.io/v1alpha4
+               nodes:
+               - role: control-plane
+               - role: worker
+               - role: worker
+
+   - command: kind create cluster --name k8s-playground --config /root/kind/config.yml
