@@ -16,17 +16,27 @@
              systemctl start docker
              systemctl enable docker
 
+
    - name: Kind Setup
      shell: |
              curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.15.0/kind-linux-amd64
              chmod +x ./kind
              mv ./kind /usr/bin/kind
 
+
    - name: Kubectl Setup
      shell: |
              curl -LO https://dl.k8s.io/release/v1.25.0/bin/linux/amd64/kubectl
              chmod +x kubectl
              mv kubectl /usr/bin/kubectl
+
+
+   - name: Kubeswitch Setup
+     shell: |
+             curl -LO https://github.com/danielfoehrKn/kubeswitch/releases/download/0.7.2/switcher_linux_amd64
+             chmod +x switcher_linux_amd64
+             mv switcher_linux_amd64 /usr/bin/switch
+
 
    - name: Creating Kind Config Directory and File
      shell: mkdir /root/kind && touch /root/kind/config.yml
