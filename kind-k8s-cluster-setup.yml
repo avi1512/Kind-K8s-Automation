@@ -6,8 +6,8 @@
    tasks:
    - name: Installing Docker and Setup
      shell: |
-             sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-             sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+             sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*   ##### Having issue with Yum CentOS 8.2.2004 ######
+             sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* ##### Having issue with Yum CentOS 8.2.2004 ######
              systemctl disable firewalld
              systemctl stop firewalld
              setenforce 0
