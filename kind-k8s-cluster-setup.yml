@@ -6,11 +6,12 @@
    tasks:
    - name: Installing Docker and Setup
      shell: |
-             sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*   ##### Having issue with Yum CentOS 8.2.2004 ######
-             sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* ##### Having issue with Yum CentOS 8.2.2004 ######
+             #######   sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*   ##### Having issue with Yum CentOS 8.2.2004 ######
+             #######   sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* ##### Having issue with Yum CentOS 8.2.2004 ######
+             sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+             sed -i 's/SELINUX=permissive/SELINUX=disabled/g' /etc/selinux/config
              systemctl disable firewalld
              systemctl stop firewalld
-             setenforce 0
              dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
              dnf install docker-ce --nobest -y
              systemctl start docker
