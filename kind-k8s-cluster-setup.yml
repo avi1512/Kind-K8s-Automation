@@ -1,10 +1,10 @@
 ---
  - name: Kind K8s Cluster Setup Play
    hosts: kind
-   gather_facts: false
+   gather_facts: true
 
    tasks:
-   - name: Installing Docker and Setup
+   - name: Installing Docker and Setup for RedHat
      shell: |
              #######   sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*   ##### Having issue with Yum CentOS 8.2.2004 ######
              #######   sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* ##### Having issue with Yum CentOS 8.2.2004 ######
@@ -16,6 +16,19 @@
              dnf install docker-ce --nobest -y
              systemctl start docker
              systemctl enable docker
+     when: ansible_facts['os_family'] == "RedHat"
+
+
+   - name: Installing Docker and Setup for Debian 
+     shell: |
+             apt update
+             apt install lsb-release curl wget ca-certificates apt-transport-https software-properties-common vim -y
+             #             curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+             curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+             add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" -y
+             apt update && apt install docker-ce -y
+             systemctl enable docker && systemctl start docker
+     when: ansible_facts['os_family'] == "Debian"
 
 
    - name: Kind Setup
@@ -25,13 +38,11 @@
              mv /tmp/kind /usr/bin/kind
 
 
-
    - name: Kubectl Setup
      shell: |
              cd /tmp && curl -LO https://dl.k8s.io/release/v1.25.0/bin/linux/amd64/kubectl
              chmod +x /tmp/kubectl
              mv /tmp/kubectl /usr/bin/kubectl
-
 
 
    - name: Kubeswitch Setup
